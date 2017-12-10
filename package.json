@@ -1,10 +1,12 @@
 {
   "name": "mTrans",
   "main": "./lib/m-trans",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A powerful mod localization tool",
   "keywords": [
-    "minecraft", "mods", "translate"
+    "minecraft",
+    "mods",
+    "translate"
   ],
   "repository": "https://github.com/Snownee/m-trans",
   "license": "MIT",
