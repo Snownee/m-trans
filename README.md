@@ -5,5 +5,5 @@ A powerful mod localization tool
 
 ## Install
 ```
-apm install m-trans
+apm install mTrans
 ```
