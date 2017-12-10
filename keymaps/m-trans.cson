@@ -1,0 +1,20 @@
+# Keybindings require three things to be fully defined: A selector that is
+# matched against the focused element, the keystroke and the command to
+# execute.
+#
+# Below is a basic keybinding which registers on all platforms by applying to
+# the root workspace element.
+
+# For more detailed documentation see
+# https://atom.io/docs/latest/behind-atom-keymaps-in-depth
+'atom-pane':
+  'up': 'm-trans:select-prev-entry'
+  'down': 'm-trans:select-next-entry'
+  'alt-q': 'm-trans:show-trans'
+
+'atom-text-editor:not([mini])':
+  'up': 'm-trans:word-move-up'
+  'down': 'm-trans:word-move-down'
+  'left': 'm-trans:word-move-left'
+  'right': 'm-trans:word-move-right'
+  'enter': 'm-trans:word-select'

@@ -1,0 +1,17 @@
+{
+  "name": "mTrans",
+  "main": "./lib/m-trans",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+    "minecraft", "mods", "translate"
+  ],
+  "repository": "https://github.com/Snownee/m-trans",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
