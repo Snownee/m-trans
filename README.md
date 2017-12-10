@@ -1,7 +1,7 @@
 # mTrans
 A powerful mod localization tool
 
-![Demo](mTrans.gif)
+![Demo](https://github.com/Snownee/m-trans/raw/master/mTrans.gif)
 
 ## Install
 ```
