@@ -194,5 +194,7 @@ module.exports = MTrans =
           el.removeClass('selected')
 
       when 'm-trans:word-select'
-        atom.workspace.getActiveTextEditor().insertText el.text()
+        str = el.text().match(/[^\]\)]+$/)
+        str = el.text().match(/[^\]]+$/) if str is null
+        atom.workspace.getActiveTextEditor().insertText str
         @modalPanel.hide()
