@@ -103,7 +103,10 @@ module.exports = MTrans =
     if jsonData.errorCode is 0
       element.children[0].innerHTML = jsonData.query
       pronounce = ''
-      explains = "<div class=\"trans\">1. <span class=\"selected\">#{jsonData.translation}</span></div>"
+      if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null
+        explains = jsonData.translation
+      else
+        explains = "<div class=\"trans\">1. <span class=\"selected\">#{jsonData.translation}</span></div>"
       webexplains = '<div class="webexplains">网络释义</div>'
       if jsonData.basic isnt undefined
         if jsonData.basic['uk-phonetic']?
@@ -164,6 +167,7 @@ module.exports = MTrans =
       e.abortKeyBinding()
       return
     el = $('.m-trans .trans>.selected')
+    return if el.length is 0
     switch e.type
       when 'm-trans:word-move-up'
         console.log el.parent()
