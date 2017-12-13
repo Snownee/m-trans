@@ -15,5 +15,11 @@
   },
   "dependencies": {
     "jquery": "^3.2.1"
-  }
+  },
+  "package-deps": [
+    "language-mc-lang"
+  ],
+  "activationHooks": [
+    "language-mc-lang:grammar-used"
+  ]
 }
