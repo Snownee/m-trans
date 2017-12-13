@@ -66,8 +66,8 @@ module.exports = MTrans =
       return
     range = [[row, str.search('=') + 1], [row, str.length]]
     editor.setSelectedBufferRange(range)
-    console.log atom.config.get('m-trans:autoQuery')
-    @showTrans {} if atom.config.get('m-trans:autoQuery')
+    console.log atom.config.get('mTrans:autoQuery')
+    @showTrans {} if atom.config.get('mTrans:autoQuery')
 
   showTrans: (e) ->
     if @modalPanel.isVisible()
@@ -104,7 +104,7 @@ module.exports = MTrans =
       element.children[0].innerHTML = jsonData.query
       pronounce = ''
       if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null
-        explains = jsonData.translation
+        explains = "<div class=\"trans\"><span class=\"selected\">#{jsonData.translation}</span></div>"
       else
         explains = "<div class=\"trans\">1. <span class=\"selected\">#{jsonData.translation}</span></div>"
       webexplains = '<div class="webexplains">网络释义</div>'
@@ -118,7 +118,7 @@ module.exports = MTrans =
         pronounce = '<div class="pronounce">' + pronounce + '</div>'
         if jsonData.basic.explains?
           if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null
-            explains += i + '<br />' for i in jsonData.basic.explains
+            explains += "<div class=\"trans\"><span>#{i}</span></div>" for i in jsonData.basic.explains
           else
             for i in [1..jsonData.basic.explains.length]
               explains += '<div class="trans">' + jsonData.basic.explains[i-1].match(/^[a-z]{1,4}\.\s/)
@@ -162,7 +162,7 @@ module.exports = MTrans =
       e.abortKeyBinding()
       return
     el = $('.m-trans .trans>.selected')
-    return if el.length is 0
+    return if el.length isnt 1
     switch e.type
       when 'm-trans:word-move-up'
         if !el.parent().is('.trans:first-child')
@@ -188,6 +188,6 @@ module.exports = MTrans =
 
       when 'm-trans:word-select'
         str = el.text().match(/[^\]\)]+$/)
-        str = el.text().match(/[^\]]+$/) if str is null
-        atom.workspace.getActiveTextEditor().insertText str
+        str = el.text().match(/[^\]]+$/) if not str
+        atom.workspace.getActiveTextEditor().insertText str[0]
         @modalPanel.hide()
