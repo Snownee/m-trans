@@ -1,4 +1,4 @@
-# mTrans
+# m-trans
 
 A powerful mod localization tool
 
@@ -9,7 +9,7 @@ A powerful mod localization tool
 ## Installation
 
 ```
-apm install mTrans
+apm install m-trans
 ```
 
 ## Key Bindings

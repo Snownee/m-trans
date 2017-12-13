@@ -1,5 +1,5 @@
 {
-  "name": "mTrans",
+  "name": "m-trans",
   "main": "./lib/m-trans",
   "version": "1.0.3",
   "description": "A powerful mod localization tool",
@@ -19,7 +19,12 @@
   "package-deps": [
     "language-mc-lang"
   ],
-  "activationHooks": [
-    "language-mc-lang:grammar-used"
-  ]
+  "configSchema": {
+    "autoQuery": {
+      "type": "boolean",
+      "default": false,
+      "title": "Auto Query",
+      "description": "Automatically Query Words when moving to a new line."
+    }
+  }
 }

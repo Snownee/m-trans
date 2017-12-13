@@ -66,6 +66,8 @@ module.exports = MTrans =
       return
     range = [[row, str.search('=') + 1], [row, str.length]]
     editor.setSelectedBufferRange(range)
+    console.log atom.config.get('m-trans:autoQuery')
+    @showTrans {} if atom.config.get('m-trans:autoQuery')
 
   showTrans: (e) ->
     if @modalPanel.isVisible()
@@ -97,8 +99,6 @@ module.exports = MTrans =
       console.log "Erorr: {e.message}"
 
   gotIt: (data, element) ->
-    # console.log $(@element).parent()
-
     jsonData = JSON.parse data
     if jsonData.errorCode is 0
       element.children[0].innerHTML = jsonData.query
@@ -130,12 +130,8 @@ module.exports = MTrans =
       element.children[1].innerHTML = pronounce
       element.children[2].innerHTML = explains
       $(element).find('.trans>span').click (e) ->
-        console.log $(@).text()
         atom.workspace.getActiveTextEditor().insertText $(@).text()
         atom.workspace.panelForItem(element).hide()
-
-      # console.log element
-      # console.log element.focus()
 
       if jsonData.web?
         for item in jsonData.web
@@ -162,7 +158,6 @@ module.exports = MTrans =
     element.children[3].innerHTML = ''
 
   wordMove: (e) ->
-    console.log e
     unless @modalPanel.isVisible()
       e.abortKeyBinding()
       return
@@ -170,8 +165,6 @@ module.exports = MTrans =
     return if el.length is 0
     switch e.type
       when 'm-trans:word-move-up'
-        console.log el.parent()
-        console.log el.parent().is('.trans:first-child')
         if !el.parent().is('.trans:first-child')
           el.removeClass('selected')
           el.parent().prev().children('span:last-child').addClass('selected')
