@@ -5,7 +5,7 @@ MTransView = require './m-trans-view'
 {CompositeDisposable} = require 'atom'
 
 HTMLsanitize = (str) ->
-  return str.replace('<', '&lt;').replace('>', '&gt;')
+  return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 
 module.exports = MTrans =
   mTransView: null
