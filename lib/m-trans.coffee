@@ -106,10 +106,11 @@ module.exports = MTrans =
     if jsonData.errorCode is 0
       element.children[0].innerHTML = HTMLsanitize(jsonData.query)
       pronounce = ''
-      if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null
-        explains = "<div class=\"trans\"><span class=\"selected\">#{HTMLsanitize(jsonData.translation)}</span></div>"
+      # 如果包含中文 或 长句翻译
+      if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null or !jsonData.basic?
+        explains = "<div class=\"trans\"><span class=\"selected\">#{HTMLsanitize(jsonData.translation[0])}</span></div>"
       else
-        explains = "<div class=\"trans\">1. <span class=\"selected\">#{HTMLsanitize(jsonData.translation)}</span></div>"
+        explains = "<div class=\"trans\">1. <span class=\"selected\">#{HTMLsanitize(jsonData.translation[0])}</span></div>"
       webexplains = '<div class="webexplains">网络释义</div>'
       if jsonData.basic isnt undefined
         if jsonData.basic['uk-phonetic']?
