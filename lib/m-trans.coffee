@@ -103,6 +103,7 @@ module.exports = MTrans =
 
   gotIt: (data, element) ->
     jsonData = JSON.parse data
+    console.log jsonData
     if jsonData.errorCode is 0
       element.children[0].innerHTML = HTMLsanitize(jsonData.query)
       pronounce = ''
@@ -125,9 +126,11 @@ module.exports = MTrans =
             explains += "<div class=\"trans\"><span>#{i}</span></div>" for i in jsonData.basic.explains
           else
             for i in [1..jsonData.basic.explains.length]
-              explains += '<div class="trans">' + jsonData.basic.explains[i-1].match(/^[a-z]{1,4}\.\s/)
+              matches = jsonData.basic.explains[i-1].match(/^[a-z]{1,4}\.\s/)
+              explains += '<div class="trans">' + (matches || "")
               list = jsonData.basic.explains[i-1].split(/；|[a-z]{1,4}\.\s/)
-              for j in [1..list.length-1]
+              matches = if matches then 1 else 0
+              for j in [matches..list.length-1]
                 explains += "<span>#{list[j]}</span>；"
               explains += '</div>'
 
