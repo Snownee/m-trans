@@ -64,7 +64,7 @@ module.exports = MTrans =
 
   select: (editor, e, row) ->
     str = editor.getBuffer().lineForRow(row)
-    unless /^[a-zA-Z0-9_:.-]+\s*=.+$/.test(str)
+    unless /^[ #a-zA-Z0-9_:.\\-]+\s*=.+$/.test(str)
       e.abortKeyBinding()
       return
     range = [[row, str.search('=') + 1], [row, str.length]]
