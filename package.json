@@ -24,7 +24,7 @@
       "type": "boolean",
       "default": false,
       "title": "Auto Query",
-      "description": "Automatically Query Words when moving to a new line."
+      "description": "Automatically query words when moving to a new line."
     }
   }
 }
