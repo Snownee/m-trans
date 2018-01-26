@@ -4,6 +4,9 @@ $ = require 'jquery'
 MTransView = require './m-trans-view'
 {CompositeDisposable} = require 'atom'
 
+HTMLsanitize = (str) ->
+  return str.replace('<', '&lt;').replace('>', '&gt;')
+
 module.exports = MTrans =
   mTransView: null
   modalPanel: null
@@ -101,12 +104,12 @@ module.exports = MTrans =
   gotIt: (data, element) ->
     jsonData = JSON.parse data
     if jsonData.errorCode is 0
-      element.children[0].innerHTML = jsonData.query
+      element.children[0].innerHTML = HTMLsanitize(jsonData.query)
       pronounce = ''
       if jsonData.query.match(/[\u4e00-\u9fa5]/) isnt null
-        explains = "<div class=\"trans\"><span class=\"selected\">#{jsonData.translation}</span></div>"
+        explains = "<div class=\"trans\"><span class=\"selected\">#{HTMLsanitize(jsonData.translation)}</span></div>"
       else
-        explains = "<div class=\"trans\">1. <span class=\"selected\">#{jsonData.translation}</span></div>"
+        explains = "<div class=\"trans\">1. <span class=\"selected\">#{HTMLsanitize(jsonData.translation)}</span></div>"
       webexplains = '<div class="webexplains">网络释义</div>'
       if jsonData.basic isnt undefined
         if jsonData.basic['uk-phonetic']?
