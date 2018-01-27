@@ -2,6 +2,7 @@ http = require 'http'
 $ = require 'jquery'
 
 MTransView = require './m-trans-view'
+MTransFormatter = require './format'
 {CompositeDisposable} = require 'atom'
 
 HTMLsanitize = (str) ->
@@ -9,6 +10,7 @@ HTMLsanitize = (str) ->
 
 module.exports = MTrans =
   mTransView: null
+  mTransFormatter: new MTransFormatter
   modalPanel: null
   subscriptions: null
 
@@ -72,7 +74,7 @@ module.exports = MTrans =
         e.abortKeyBinding()
         return
       range = [[row, str.indexOf('=') + 1], [row, str.length]]
-    else
+    else if grammar is 'source.json'
       matches = str.match(/^\s*('|")[ #a-zA-Z0-9_:.\\-]+?\1\s*:\s*('|")(.*)\2\s*,?\s*$/)
       unless matches
         e.abortKeyBinding()
@@ -82,6 +84,8 @@ module.exports = MTrans =
       pos = str.indexOf(':', pos + 1)
       pos = str.indexOf(matches[2], pos + 1)
       range = [[row, pos + 1], [row, pos + 1 + matches[3].length]]
+    else
+      range = [[row, 0], [row, str.length]]
 
     editor.setSelectedBufferRange(range)
     @showTrans {} if atom.config.get('mTrans:autoQuery')
@@ -94,7 +98,7 @@ module.exports = MTrans =
     editor = atom.workspace.getActiveTextEditor()
     word = editor.getSelectedText()
     if word.length is 0
-      @select editor, { abortKeyBinding: -> }, editor.getCursorBufferPosition().row
+      @select editor, { abortKeyBinding: -> }, editor.getCursorBufferPosition().row, editor.getGrammar().scopeName
       word = editor.getSelectedText()
       return if word.length is 0
 
