@@ -47,29 +47,43 @@ module.exports = MTrans =
   selectNext: (e) ->
     editor = atom.workspace.getActiveTextEditor()
     point = editor.getCursorBufferPosition()
-    if editor.getGrammar().packageName isnt 'language-mc-lang' or point.row + 1 is editor.getLineCount
+    grammar = editor.getGrammar().scopeName
+    unless (grammar is 'source.lang' or grammar is 'source.json') and point.row + 1 isnt editor.getLineCount
       e.abortKeyBinding()
       return
 
-    @select editor, e, point.row + 1
+    @select editor, e, point.row + 1, grammar
 
   selectPrev: (e) ->
     editor = atom.workspace.getActiveTextEditor()
     point = editor.getCursorBufferPosition()
-    if editor.getGrammar().packageName isnt 'language-mc-lang' or point.row is 0
+    grammar = editor.getGrammar().scopeName
+
+    unless (grammar is 'source.lang' or grammar is 'source.json') and point.row isnt 0
       e.abortKeyBinding()
       return
 
-    @select editor, e, point.row - 1
+    @select editor, e, point.row - 1, grammar
 
-  select: (editor, e, row) ->
+  select: (editor, e, row, grammar) ->
     str = editor.getBuffer().lineForRow(row)
-    unless /^[ #a-zA-Z0-9_:.\\-]+\s*=.+$/.test(str)
-      e.abortKeyBinding()
-      return
-    range = [[row, str.search('=') + 1], [row, str.length]]
+    if grammar is 'source.lang'
+      unless /^[ #a-zA-Z0-9_:.\\-]+\s*=.+$/.test(str)
+        e.abortKeyBinding()
+        return
+      range = [[row, str.indexOf('=') + 1], [row, str.length]]
+    else
+      matches = str.match(/^\s*('|")[ #a-zA-Z0-9_:.\\-]+?\1\s*:\s*('|")(.*)\2\s*,?\s*$/)
+      unless matches
+        e.abortKeyBinding()
+        return
+      pos = str.indexOf(matches[1])
+      pos = str.indexOf(matches[1], pos + 1)
+      pos = str.indexOf(':', pos + 1)
+      pos = str.indexOf(matches[2], pos + 1)
+      range = [[row, pos + 1], [row, pos + 1 + matches[3].length]]
+
     editor.setSelectedBufferRange(range)
-    console.log atom.config.get('mTrans:autoQuery')
     @showTrans {} if atom.config.get('mTrans:autoQuery')
 
   showTrans: (e) ->
@@ -103,7 +117,6 @@ module.exports = MTrans =
 
   gotIt: (data, element) ->
     jsonData = JSON.parse data
-    console.log jsonData
     if jsonData.errorCode is 0
       element.children[0].innerHTML = HTMLsanitize(jsonData.query)
       pronounce = ''
