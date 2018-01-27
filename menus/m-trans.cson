@@ -1,0 +1,33 @@
+'menu': [
+  'label': 'Packages'
+  'submenu': [
+    'label': 'M Trans'
+    'submenu': [
+      {
+        'type': 'checkbox'
+        'label': '开启'
+        'command': 'm-trans:toggle'
+      }
+      {
+        'type': 'checkbox'
+        'label': '自动查询'
+        'command': 'm-trans:toggle-auto-query'
+      }
+      {
+        "type": "separator"
+      }
+      {
+        'label': '转换为JSON格式'
+        'command': 'm-trans:convert'
+      }
+      {
+        'label': 'JSON校验'
+        'command': 'm-trans:check'
+      }
+      {
+        'label': 'JSON格式化'
+        'command': 'm-trans:format'
+      }
+    ]
+  ]
+]
