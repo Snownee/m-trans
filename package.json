@@ -20,11 +20,19 @@
     "language-mc-lang"
   ],
   "configSchema": {
+    "selectText": {
+      "type": "boolean",
+      "default": true,
+      "title": "选中文本",
+      "description": "移动到新行时选中文本",
+      "order": 1
+    },
     "autoQuery": {
       "type": "boolean",
       "default": false,
-      "title": "Auto Query",
-      "description": "Automatically query words when moving to a new line."
+      "title": "自动查询",
+      "description": "选中文本后自动进行查询",
+      "order": 2
     }
   }
 }

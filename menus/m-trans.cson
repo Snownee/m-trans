@@ -5,11 +5,13 @@
     'submenu': [
       {
         'type': 'checkbox'
-        'label': '开启'
-        'command': 'm-trans:toggle'
+        'checked': false
+        'label': '选中文本'
+        'command': 'm-trans:toggle-select-text'
       }
       {
         'type': 'checkbox'
+        'checked': false
         'label': '自动查询'
         'command': 'm-trans:toggle-auto-query'
       }

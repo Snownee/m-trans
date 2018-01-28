@@ -8,6 +8,14 @@ MTransFormatter = require './format'
 HTMLsanitize = (str) ->
   return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 
+normalizeLabel = (label) ->
+  return undefined unless label?
+
+  if process.platform is 'darwin'
+    label
+  else
+    label.replace(/\&/g, '')
+
 module.exports = MTrans =
   mTransView: null
   mTransFormatter: new MTransFormatter
@@ -37,6 +45,29 @@ module.exports = MTrans =
         @wordMove(e)
     @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-select', (e) =>
         @wordMove(e)
+    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:toggle-select-text', ->
+      atom.config.set('m-trans.selectText', !atom.config.get('m-trans.selectText'))
+    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:toggle-auto-query', ->
+      atom.config.set('m-trans.autoQuery', !atom.config.get('m-trans.autoQuery'))
+
+
+    for item in atom.menu.template
+      if item.label? and normalizeLabel(item.label) is 'Packages'
+        @menus = item.submenu
+    if @menus?
+      for item in @menus
+        if item.label? and normalizeLabel(item.label) is 'M Trans'
+          @menus = item.submenu
+
+    atom.config.observe 'm-trans.selectText', (newValue) =>
+      return unless @menus?
+      @menus[0].checked = newValue
+      atom.menu.update()
+
+    atom.config.observe 'm-trans.autoQuery', (newValue) =>
+      return unless @menus?
+      @menus[1].checked = newValue
+      atom.menu.update()
 
   deactivate: ->
     @modalPanel.destroy()
@@ -47,6 +78,7 @@ module.exports = MTrans =
     mTransViewState: @mTransView.serialize()
 
   selectNext: (e) ->
+    return unless atom.config.get('m-trans.selectText')
     editor = atom.workspace.getActiveTextEditor()
     point = editor.getCursorBufferPosition()
     grammar = editor.getGrammar().scopeName
@@ -57,6 +89,7 @@ module.exports = MTrans =
     @select editor, e, point.row + 1, grammar
 
   selectPrev: (e) ->
+    return unless atom.config.get('m-trans.selectText')
     editor = atom.workspace.getActiveTextEditor()
     point = editor.getCursorBufferPosition()
     grammar = editor.getGrammar().scopeName
@@ -88,7 +121,7 @@ module.exports = MTrans =
       range = [[row, 0], [row, str.length]]
 
     editor.setSelectedBufferRange(range)
-    @showTrans {} if atom.config.get('mTrans:autoQuery')
+    @showTrans {} if atom.config.get('m-trans.autoQuery')
 
   showTrans: (e) ->
     if @modalPanel.isVisible()
