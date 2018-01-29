@@ -6,6 +6,13 @@ A powerful mod localization tool
 
 **This package requires [language-mc-lang](https://github.com/Snownee/language-mc-lang) to work properly.**
 
+## Features
+
+* Auto-selecting new line
+* Translating on the fly
+* 1.13 format support & beautify
+* Converter
+
 ## Installation
 
 ```
@@ -24,3 +31,4 @@ apm install m-trans
 
 Project that made this package possible
 * [atom-trans-en-zh](https://github.com/alim0x/atom-trans-en-zh)
+* [tree-view](https://github.com/atom/tree-view)
