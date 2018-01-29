@@ -1,12 +1,19 @@
 module.exports =
 class MTransFormatter
-  check: (str) ->
+  parse: (str, return_error = false) ->
     try
       return JSON.parse(str)
     catch error
-      return false
+      console.error error
+      if return_error
+        return error
+      else
+        return false
 
   format: (str) ->
-    json = @check str
+    json = @parse str
     if json
-      return require('util').inspect(json)
+      return JSON.stringify(json, null, atom.config.get("editor.tabLength"))
+
+  convert: (str) ->
+    

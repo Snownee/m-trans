@@ -49,6 +49,29 @@ module.exports = MTrans =
       atom.config.set('m-trans.selectText', !atom.config.get('m-trans.selectText'))
     @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:toggle-auto-query', ->
       atom.config.set('m-trans.autoQuery', !atom.config.get('m-trans.autoQuery'))
+    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:check', =>
+      editor = atom.workspace.getActiveTextEditor()
+      str = editor.getText()
+      str = @mTransFormatter.parse(str, true)
+      unless str instanceof SyntaxError
+        atom.notifications.addSuccess("校验成功。", {
+            dismissable: true
+          })
+      else
+        atom.notifications.addError("校验失败。", {
+            detail: str.toString(),
+            dismissable: true
+          })
+    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:format', =>
+      editor = atom.workspace.getActiveTextEditor()
+      str = editor.getText()
+      str = @mTransFormatter.format(str)
+      if str
+        editor.setText str + '\n'
+      else
+        atom.notifications.addError("校验失败。", {
+            dismissable: true
+          })
 
 
     for item in atom.menu.template
