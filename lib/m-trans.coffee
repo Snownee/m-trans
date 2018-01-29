@@ -1,6 +1,8 @@
 http = require 'http'
 $ = require 'jquery'
+path = require 'path'
 
+AddDialog = require './add-dialog'
 MTransView = require './m-trans-view'
 MTransFormatter = require './format'
 {CompositeDisposable} = require 'atom'
@@ -29,50 +31,65 @@ module.exports = MTrans =
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
-    @subscriptions.add atom.commands.add 'atom-pane', 'm-trans:select-prev-entry', (e) =>
+    @subscriptions.add atom.commands.add 'atom-pane',
+      'm-trans:select-prev-entry': (e) =>
         @selectPrev(e)
-    @subscriptions.add atom.commands.add 'atom-pane', 'm-trans:select-next-entry', (e) =>
+      'm-trans:select-next-entry': (e) =>
         @selectNext(e)
-    @subscriptions.add atom.commands.add 'atom-pane', 'm-trans:show-trans', (e) =>
+      'm-trans:show-trans': (e) =>
         @showTrans(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-move-up', (e) =>
-        @wordMove(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-move-down', (e) =>
-        @wordMove(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-move-left', (e) =>
-        @wordMove(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-move-right', (e) =>
-        @wordMove(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:word-select', (e) =>
-        @wordMove(e)
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:toggle-select-text', ->
-      atom.config.set('m-trans.selectText', !atom.config.get('m-trans.selectText'))
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:toggle-auto-query', ->
-      atom.config.set('m-trans.autoQuery', !atom.config.get('m-trans.autoQuery'))
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:check', =>
-      editor = atom.workspace.getActiveTextEditor()
-      str = editor.getText()
-      str = @mTransFormatter.parse(str, true)
-      unless str instanceof SyntaxError
-        atom.notifications.addSuccess("校验成功。", {
-            dismissable: true
-          })
-      else
-        atom.notifications.addError("校验失败。", {
-            detail: str.toString(),
-            dismissable: true
-          })
-    @subscriptions.add atom.commands.add 'atom-text-editor', 'm-trans:format', =>
-      editor = atom.workspace.getActiveTextEditor()
-      str = editor.getText()
-      str = @mTransFormatter.format(str)
-      if str
-        editor.setText str + '\n'
-      else
-        atom.notifications.addError("校验失败。", {
-            dismissable: true
-          })
 
+    @subscriptions.add atom.commands.add 'atom-text-editor',
+      'm-trans:word-move-up': (e) =>
+        @wordMove(e)
+      'm-trans:word-move-down': (e) =>
+        @wordMove(e)
+      'm-trans:word-move-left': (e) =>
+        @wordMove(e)
+      'm-trans:word-move-right': (e) =>
+        @wordMove(e)
+      'm-trans:word-select': (e) =>
+        @wordMove(e)
+      'm-trans:toggle-select-text': ->
+        atom.config.set('m-trans.selectText', !atom.config.get('m-trans.selectText'))
+      'm-trans:toggle-auto-query': ->
+        atom.config.set('m-trans.autoQuery', !atom.config.get('m-trans.autoQuery'))
+      'm-trans:check': =>
+        editor = atom.workspace.getActiveTextEditor()
+        str = editor.getText()
+        str = @mTransFormatter.parse(str, true)
+        unless str instanceof SyntaxError
+          atom.notifications.addSuccess "校验成功。"
+        else
+          atom.notifications.addError "校验失败。",
+            'detail': str.toString()
+
+      'm-trans:format': =>
+        editor = atom.workspace.getActiveTextEditor()
+        str = editor.getText()
+        str = @mTransFormatter.format str
+        if str
+          editor.setText str + '\n'
+        else
+          atom.notifications.addError "校验失败。"
+
+      'm-trans:convert': =>
+        location = atom.workspace.getActiveTextEditor().getPath()
+        o = path.parse(location)
+        location = "#{o.dir}/#{o.name}.json"
+        dialog = new AddDialog(location)
+        dialog.onDidCreateFile (createdPath) =>
+          str = atom.workspace.getActiveTextEditor().getText()
+          [jsonData, count] = @mTransFormatter.convert str
+          if jsonData?
+            fs.writeFile(createdPath, @mTransFormatter.format(jsonData), (success = count[0], pass = count[1]) ->
+              atom.notifications.addSuccess "转换成功。",
+                detail: "转换 #{success} 行\n跳过 #{pass} 行"
+                atom.workspace.open createdPath
+            )
+          else
+            atom.notifications.addError "转换失败。"
+        dialog.attach()
 
     for item in atom.menu.template
       if item.label? and normalizeLabel(item.label) is 'Packages'
@@ -126,7 +143,7 @@ module.exports = MTrans =
   select: (editor, e, row, grammar) ->
     str = editor.getBuffer().lineForRow(row)
     if grammar is 'source.lang'
-      unless /^[ #a-zA-Z0-9_:.\\-]+\s*=.+$/.test(str)
+      unless /^[ a-zA-Z0-9_:.\\-][ #a-zA-Z0-9_:.\\-]*\s*=.+$/.test(str)
         e.abortKeyBinding()
         return
       range = [[row, str.indexOf('=') + 1], [row, str.length]]
