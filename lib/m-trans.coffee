@@ -82,6 +82,7 @@ module.exports = MTrans =
           str = atom.workspace.getActiveTextEditor().getText()
           [jsonData, count] = @mTransFormatter.convert str
           if jsonData?
+            fs = require 'fs-plus'
             fs.writeFile(createdPath, @mTransFormatter.format(jsonData), (success = count[0], pass = count[1]) ->
               atom.notifications.addSuccess "转换成功。",
                 detail: "转换 #{success} 行\n跳过 #{pass} 行"
