@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "fs-plus": "^3.0.2",
-    "jquery": "^3.2.1"
+    "jquery": "^3.4.0"
   },
   "package-deps": [
     "language-mc-lang"
